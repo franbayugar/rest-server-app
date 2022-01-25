@@ -30,17 +30,21 @@ const usuariosPost = async (req , res = response) => {
     });
 }
 
-const usuariosPut = (req, res = response) => {
+const usuariosPut = async(req, res = response) => {
     const id = req.params.id;
 
-    const {nombre, edad} = req.body;
+    const { password, google, correo, ... info} = req.body;
 
+    if(password){
+        const salt = bcryptjs.genSaltSync();
+        info.password = bcryptjs.hashSync(password, salt);
+    }
 
+    const usuarioDB = await Usuario.findByIdAndUpdate(id, info);
+    
     res.json({
         msg: 'Test put',
-        id,
-        nombre,
-        edad
+        usuarioDB
     });
 }
 
